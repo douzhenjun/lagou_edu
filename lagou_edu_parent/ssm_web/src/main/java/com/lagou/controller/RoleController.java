@@ -1,10 +1,9 @@
 package com.lagou.controller;
 
-import com.lagou.domain.Menu;
-import com.lagou.domain.ResponseResult;
-import com.lagou.domain.Role;
-import com.lagou.domain.RoleMenuVo;
+import com.lagou.domain.*;
 import com.lagou.service.MenuService;
+import com.lagou.service.ResourceCategoryService;
+import com.lagou.service.ResourceService;
 import com.lagou.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +26,12 @@ public class RoleController {
     
     @Autowired
     private RoleService roleService;
+    
+    @Autowired
+    private ResourceCategoryService resourceCategoryService;
+    
+    @Autowired
+    private ResourceService resourceService;
     
     /*条件查询*/
     @RequestMapping("findAllRole")
@@ -84,5 +89,19 @@ public class RoleController {
         roleService.deleteRole(roleId);
         ResponseResult responseResult = new ResponseResult(null);
         return responseResult;
+    }
+
+    /*获得资源分类和资源信息*/
+    @RequestMapping("findResourceListByRoleId")
+    public ResponseResult findAllResourceCategoryByRoleId(int roleId) {
+        List<ResourceCategory> resourceCategoryList = resourceCategoryService.findAllResourceCategoryByRoleId(roleId);
+        return new ResponseResult(resourceCategoryList);
+    }
+    
+    /*为角色分配资源*/
+    @RequestMapping("roleContextResource")
+    public ResponseResult roleContextResource(@RequestBody RoleResourceVo roleResourceVo){
+        resourceService.roleContextResource(roleResourceVo);
+        return new ResponseResult(null);
     }
 }

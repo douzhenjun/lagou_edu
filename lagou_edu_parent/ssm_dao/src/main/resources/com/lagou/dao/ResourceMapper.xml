@@ -4,6 +4,7 @@
 
 <mapper namespace="com.lagou.dao.ResourceMapper">
     
+    <!--条件查找资源-->
     <select id="findAllResourceByPage" parameterType="resourceVo" resultType="resource">
         select * from resource
         <where>
@@ -18,4 +19,16 @@
             </if>
         </where>
     </select>
+    
+    <!--清空角色资源中间表-->
+    <delete id="deleteRoleResource" parameterType="roleResourceVo">
+        delete from role_resource_relation where role_id = #{roleId}
+    </delete>
+    
+    <!--新增角色资源中间表-->
+    <insert id="saveRoleResource" parameterType="roleResourceRelation">
+        insert into role_resource_relation (id, resource_id, role_id, created_time, updated_time, created_by, updated_by)
+        values (#{id},#{resourceId},#{roleId},#{createdTime},#{updatedTime},#{createdBy},#{updatedBy})
+    </insert>
+    
 </mapper>

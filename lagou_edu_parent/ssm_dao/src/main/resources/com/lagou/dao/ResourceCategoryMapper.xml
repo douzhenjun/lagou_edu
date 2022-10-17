@@ -9,4 +9,51 @@
         select * from resource_category
     </select>
     
+    <!--新增资源分类-->
+    <insert id="saveResourceCategory" parameterType="resourceCategory">
+        INSERT INTO resource_category (`name`,sort,created_time,updated_time,created_by,updated_by)
+        VALUES(#{name},#{sort},#{createdTime},#{updatedTime},#{createdBy},#{updatedBy})
+    </insert>
+    
+    <!--修改资源分类-->
+    <update id="updateResourceCategory" parameterType="resourceCategory">
+        update resource_category
+        <trim prefix="set" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="sort != null">
+                sort = #{sort},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+    
+    <!--删除资源分类-->
+    <delete id="deleteResourceCategory" parameterType="int">
+        delete from resource_category where id = #{id}
+    </delete>
+    
+    
+    <!--resultMap-->
+    <resultMap id="resourceCategory" type="resourceCategory">
+        <id property="id" column="rcid"/>
+        <result property="name" column="rcname"/>
+        <collection property="resourceList" ofType="resource">
+            <id property="id" column="id"/>
+            <result property="name" column="name"/>
+            <result property="url" column="url"/>
+            <result property="categoryId" column="category_id"/>
+            <result property="description" column="description"/>
+        </collection>
+    </resultMap>
+    
+    <!--根据roleId获得资源分类和资源信息-->
+    <select id="findAllResourceCategoryByRoleId" parameterType="int" resultMap="resourceCategory">
+        SELECT rc.id rcid, rc.name rcname, re.id, re.name, re.url, re.category_id, re.description
+        FROM resource re INNER JOIN role_resource_relation rrr ON re.id = rrr.resource_id
+                         INNER JOIN resource_category rc ON rc.id = re.category_id
+        WHERE rrr.role_id = #{rid}
+    </select>
+    
 </mapper>

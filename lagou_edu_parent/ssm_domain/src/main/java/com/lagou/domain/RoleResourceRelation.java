@@ -1,50 +1,46 @@
 package com.lagou.domain;
 
 import java.util.Date;
-import java.util.List;
 
-public class ResourceCategory {
-
-    private Integer id;
-    private String name;
-    private Integer sort;
+/*角色资源中间表*/
+public class RoleResourceRelation {
+    
+    private int id;
+    
+    private int resourceId;
+    
+    private int roleId;
+    
     private Date createdTime;
+    
     private Date updatedTime;
+    
     private String createdBy;
+    
     private String updatedBy;
 
-    public List<Resource> getResourceList() {
-        return resourceList;
-    }
-
-    public void setResourceList(List<Resource> resourceList) {
-        this.resourceList = resourceList;
-    }
-
-    private List<Resource> resourceList;
-
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public int getResourceId() {
+        return resourceId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setResourceId(int resourceId) {
+        this.resourceId = resourceId;
     }
 
-    public Integer getSort() {
-        return sort;
+    public int getRoleId() {
+        return roleId;
     }
 
-    public void setSort(Integer sort) {
-        this.sort = sort;
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
     }
 
     public Date getCreatedTime() {
