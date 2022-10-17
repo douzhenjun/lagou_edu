@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lagou.dao.UserMapper">
+    
+    <!--多条件查询-->
+    <select id="findAllUserByCondition" parameterType="userVO" resultType="user">
+        select * from user
+        <where>
+            <if test="username!=null and username!=' '">
+                phone=#{username}
+            </if> 
+            <if test="startCreateTime!=null and endCreateTime!=null">
+                and create_time between #{startCreateTime} and #{endCreateTime}
+            </if>
+            <if test="true">
+                and is_del != 1
+            </if>
+        </where>
+    </select>
+    
+    <!--新增用户-->
+    <insert id="saveUser" parameterType="user">
+        insert into `user`(name, phone, password, status, is_del, create_time, update_time)
+        values(#{name}, #{phone}, #{password}, #{status}, #{is_del}, #{create_time}, #{update_time})
+    </insert>
+    
+    <!--根据电话号码查询用户信息-->
+    <select id="findUserByPhone" parameterType="user" resultType="user">
+        select * from user where phone = #{phone}
+    </select>
+    
+    <!--根据用户id查询角色信息-->
+    <select id="findRoleByUserId" parameterType="int" resultType="role">
+        SELECT r.id, r.code, r.name, r.description FROM USER, roles r, user_role_relation ur
+        WHERE r.id = ur.role_id
+          AND ur.user_id = user.id
+          AND user.id = #{uid}
+    </select>
+    
+    <!--根据用户id清空中间表-->
+    <delete id="deleteUserRoleRelation" parameterType="int">
+        delete from user_role_relation where user_id = #{uid}
+    </delete>
+    
+    <!--根据UserRoleVo对象新增中间表-->
+    <insert id="saveUserRoleRelation" parameterType="userRoleRelation">
+        insert into user_role_relation(user_id, role_id, created_time, updated_time, created_by, updated_by)
+        values (#{userId},#{roleId},#{createdTime},#{updatedTime},#{createdBy},#{updatedBy})
+    </insert>
+    
+    <!--根据角色id列表查询对应的父菜单列表-->
+    <select id="findParentMenuByRoleIds" parameterType="java.util.List" resultType="menu">
+        SELECT DISTINCT m.* FROM menu m, roles r, role_menu_relation rm
+        WHERE m.id = rm.menu_id
+          AND r.id = rm.role_id
+          AND m.parent_id = -1
+          AND r.id IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    
+    <!--根据父菜单pid查询子菜单信息-->
+    <select id="findSubMenuByPid" parameterType="int" resultType="menu">
+        select * from menu where parent_id = #{pid}
+    </select>
+    
+    <!--根据用户id查询所有的资源信息-->
+    <select id="findResourceByRoleIds" parameterType="java.util.List" resultType="resource">
+        SELECT DISTINCT re.* FROM resource re, roles r, role_menu_relation rm
+        WHERE re.id = rm.menu_id
+          AND r.id = rm.role_id
+          AND r.id IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+</mapper>
